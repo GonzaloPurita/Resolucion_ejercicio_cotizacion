@@ -2,18 +2,18 @@
 // Cotizadores
 
 object cotizadorPapa {
-    method importeTotal(cant) = produccion.costo(cant) + impuesto.valorDeImpuesto(cant) + derechoDeExportacion.valorDerechoDeExportacion(cant)
+  method importeTotal(cant) = produccion.costo(cant) + impuesto.valorDeImpuesto(cant) + derechoDeExportacion.valorDerechoDeExportacion(cant)
 }
 
 object cotizadorBatata {
   var property costoDeProduccion = 100
   var property impuesto = impuestoCompuesto
 
-  method importeTotal() = costoDeProduccion + impuesto.valorDeImpuesto()
+  method importeTotal(cant) = costoDeProduccion + impuesto.valorDeImpuesto(cant)
 }
 
 object cotizadorZapallo {
-  method importeTotal(cant) = produccionRegular.costo(cant) + derechoDeExportacion.valorDerechoDeExportacion(cant) / 2
+  method importeTotal(cant) = pepe.importeUnitario() * cant + derechoDeExportacion.valorDerechoDeExportacion(cant) / 2
 }
 
 // --------------------------------
@@ -23,7 +23,7 @@ object produccion {
   var tipoDeProduccion = produccionBuena
   //var property cant = 1
 
-  method costo(cant) = tipoDeProduccion.costo(cant) 
+  method costo(cant) = tipoDeProduccion.importeUnitario() * cant
 
   method cambioDeTipo(nuevoTipo) {
     tipoDeProduccion = nuevoTipo
@@ -31,23 +31,19 @@ object produccion {
 }
 
 object produccionBuena {
-  var property precioXUnidad = 3
-
-  method costo(cant) = precioXUnidad * cant
+  method importeUnitario() = 3
 }
 
 object produccionRegular {
-
-  method costo(cant) = pepe.importeUnitario()  * cant
+  method importeUnitario() = pepe.importeUnitario()
 }
 
 object pepe {
-  var property importeUnitario = 1
+  method importeUnitario() = 1
 }
 
 object produccionPremium {
-  
-  method costo(cant) = produccionBuena.precioXUnidad() * cant
+  method importeUnitario() = produccionBuena.importeUnitario() * 1.5
 }
 
 
@@ -84,7 +80,7 @@ object impuestoCompuesto {
     const impuesto1 = impuestoSimple
     const impuesto2 = impuestoConGarantia
 
-    method valorImpuesto(cant) = impuesto1.valorDeImpuesto(cant) + impuesto2.valorDeImpuesto(cant)
+    method valorDeImpuesto(cant) = impuesto1.valorDeImpuesto(cant) + impuesto2.valorDeImpuesto(cant)
 }
 
 // --------------------------------
