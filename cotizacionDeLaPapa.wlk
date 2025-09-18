@@ -28,6 +28,8 @@ object produccion {
   method cambioDeTipo(nuevoTipo) {
     tipoDeProduccion = nuevoTipo
   }
+
+  method tipoDeProduccion() = tipoDeProduccion
 }
 
 object produccionBuena {
@@ -77,8 +79,8 @@ object impuestoDelPueblo {
 }
 
 object impuestoCompuesto {
-    const impuesto1 = impuestoSimple
-    const impuesto2 = impuestoConGarantia
+    var property impuesto1 = impuestoSimple
+    var property impuesto2 = impuestoConGarantia
 
     method valorDeImpuesto(cant) = impuesto1.valorDeImpuesto(cant) + impuesto2.valorDeImpuesto(cant)
 }

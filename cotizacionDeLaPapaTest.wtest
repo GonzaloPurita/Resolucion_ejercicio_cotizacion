@@ -1,0 +1,117 @@
+import cotizacionDeLaPapa.*
+
+// --------------------------
+// Producción
+// --------------------------
+
+test "Producción buena: importe unitario fijo" {
+  produccion.cambioDeTipo(produccionBuena)
+  assert.equals(3, produccion.tipoDeProduccion().importeUnitario())
+  assert.equals(30, produccion.costo(10))
+}
+
+test "Producción regular: depende de pepe" {
+  produccion.cambioDeTipo(produccionRegular)
+  assert.equals(1, produccion.tipoDeProduccion().importeUnitario())
+  assert.equals(50, produccion.costo(50))
+}
+
+test "Producción premium: 50% más que buena" {
+  produccion.cambioDeTipo(produccionPremium)
+  assert.equals(4.5, produccion.tipoDeProduccion().importeUnitario())
+  assert.equals(45, produccion.costo(10))
+}
+
+// --------------------------
+// Impuestos
+// --------------------------
+
+test "Impuesto simple: 10% del costo" {
+  produccion.cambioDeTipo(produccionBuena)
+  impuesto.cambioDeTipoImpuesto(impuestoSimple)
+  assert.equals(30, impuesto.valorDeImpuesto(100))
+}
+
+test "Impuesto con garantía: mínimo 100" {
+  produccion.cambioDeTipo(produccionBuena)
+  impuesto.cambioDeTipoImpuesto(impuestoConGarantia)
+  assert.equals(1.5, impuesto.valorDeImpuesto(10))
+  assert.equals(100, impuesto.valorDeImpuesto(1000))
+}
+
+test "Impuesto del pueblo: siempre cero" {
+  produccion.cambioDeTipo(produccionBuena)
+  impuesto.cambioDeTipoImpuesto(impuestoDelPueblo)
+  assert.equals(0, impuesto.valorDeImpuesto(100))
+}
+
+test "Impuesto compuesto: suma simple + con garantía" {
+  produccion.cambioDeTipo(produccionBuena)
+  impuestoCompuesto.impuesto1(impuestoSimple)
+  impuestoCompuesto.impuesto2(impuestoConGarantia)
+  impuesto.cambioDeTipoImpuesto(impuestoCompuesto)
+
+  assert.equals(45, impuesto.valorDeImpuesto(100))
+}
+
+// --------------------------
+// Derechos de exportación
+// --------------------------
+
+test "Derecho estático: 200 si costo > 1000, 300 en caso contrario" {
+  produccion.cambioDeTipo(produccionBuena)
+  derechoDeExportacion.cambioDeDerecho(derechoEstatico)
+  assert.equals(200, derechoDeExportacion.valorDerechoDeExportacion(500))
+  assert.equals(300, derechoDeExportacion.valorDerechoDeExportacion(100))
+}
+
+test "Derecho privatizador: 50 + 1 por cada 10 unidades" {
+  produccion.cambioDeTipo(produccionBuena)
+  derechoDeExportacion.cambioDeDerecho(derechoPrivatizador)
+  assert.equals(60, derechoDeExportacion.valorDerechoDeExportacion(100)) 
+  assert.equals(150, derechoDeExportacion.valorDerechoDeExportacion(1000))
+}
+
+test "Derecho demagógico: valor variable" {
+  produccion.cambioDeTipo(produccionBuena)
+  derechoDeExportacion.cambioDeDerecho(derechoDemagogico)
+  derechoDemagogico.valor(100)
+  assert.equals(100, derechoDeExportacion.valorDerechoDeExportacion(100))
+  derechoDemagogico.valor(250)
+  assert.equals(250, derechoDeExportacion.valorDerechoDeExportacion(100))
+}
+
+test "Derecho nulo: siempre cero" {
+  produccion.cambioDeTipo(produccionBuena)
+  derechoDeExportacion.cambioDeDerecho(derechoNulo)
+  assert.equals(0, derechoDeExportacion.valorDerechoDeExportacion(100))
+}
+
+// --------------------------
+// Casos de integración
+// --------------------------
+
+test "Cotizador de papa con producción buena, impuesto simple y derecho estático" {
+  produccion.cambioDeTipo(produccionBuena)
+  impuesto.cambioDeTipoImpuesto(impuestoSimple)
+  derechoDeExportacion.cambioDeDerecho(derechoEstatico)
+
+  assert.equals(630, cotizadorPapa.importeTotal(100))
+}
+
+test "Cotizador de batata con impuesto compuesto" {
+  produccion.cambioDeTipo(produccionBuena)
+  impuestoCompuesto.impuesto1(impuestoSimple)
+  impuestoCompuesto.impuesto2(impuestoConGarantia)
+  impuesto.cambioDeTipoImpuesto(impuestoCompuesto)
+
+  assert.equals(145, cotizadorBatata.importeTotal(100))
+}
+
+test "Cotizador de zapallo con derecho demagógico" {
+  produccion.cambioDeTipo(produccionRegular)
+  derechoDeExportacion.cambioDeDerecho(derechoDemagogico)
+  derechoDemagogico.valor(100)
+
+  assert.equals(150, cotizadorZapallo.importeTotal(100))
+}
